@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加法计算器</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        neutral: '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+            }
+            .card-shadow {
+                @apply shadow-lg hover:shadow-xl transition-shadow duration-300;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-green-50 min-h-screen flex items-center justify-center p-4 font-sans">
+    <div class="w-full max-w-md">
+        <!-- 计算器卡片 -->
+        <div class="bg-white rounded-2xl p-8 card-shadow">
+            <div class="text-center mb-8">
+                <h1 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-gray-800 mb-2">加法计算器</h1>
+                <p class="text-gray-500">输入两个数字，获取它们的和</p>
+            </div>
+            
+            <!-- 输入区域 -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <!-- 第一个数字输入框 -->
+                    <div class="md:col-span-1">
+                        <label for="num1" class="block text-sm font-medium text-gray-700 mb-1">第一个数字</label>
+                        <input 
+                            type="number" 
+                            id="num1" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 input-focus transition-all duration-200"
+                            placeholder="0"
+                        >
+                    </div>
+                    
+                    <!-- 加号图标 -->
+                    <div class="flex justify-center items-center">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl">
+                            <i class="fa fa-plus"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 第二个数字输入框 -->
+                    <div class="md:col-span-1">
+                        <label for="num2" class="block text-sm font-medium text-gray-700 mb-1">第二个数字</label>
+                        <input 
+                            type="number" 
+                            id="num2" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 input-focus transition-all duration-200"
+                            placeholder="0"
+                        >
+                    </div>
+                </div>
+                
+                <!-- 等于号 -->
+                <div class="flex justify-center my-2">
+                    <div class="w-16 h-1 bg-gray-200 rounded-full relative">
+                        <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 text-gray-500">
+                            等于
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 结果显示区域 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">结果</label>
+                    <div id="result" class="w-full px-4 py-3 rounded-lg bg-neutral text-center text-2xl font-semibold text-gray-800 min-h-[60px] flex items-center justify-center transition-all duration-300">
+                        0
+                    </div>
+                </div>
+                
+                <!-- 计算按钮 -->
+                <button 
+                    id="calculateBtn" 
+                    class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                >
+                    <i class="fa fa-calculator"></i>
+                    <span>计算总和</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 页脚信息 -->
+        <div class="text-center mt-6 text-gray-500 text-sm">
+            <p>输入任意数字，实时获取计算结果</p>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const num1Input = document.getElementById('num1');
+        const num2Input = document.getElementById('num2');
+        const resultElement = document.getElementById('result');
+        const calculateBtn = document.getElementById('calculateBtn');
+        
+        // 计算总和的函数
+        function calculateSum() {
+            // 获取输入值，默认为0
+            const num1 = parseFloat(num1Input.value) || 0;
+            const num2 = parseFloat(num2Input.value) || 0;
+            
+            // 计算总和
+            const sum = num1 + num2;
+            
+            // 显示结果并添加动画效果
+            resultElement.classList.add('bg-secondary/20', 'text-secondary');
+            resultElement.textContent = sum;
+            
+            // 移除动画效果
+            setTimeout(() => {
+                resultElement.classList.remove('bg-secondary/20', 'text-secondary');
+            }, 300);
+        }
+        
+        // 绑定事件
+        calculateBtn.addEventListener('click', calculateSum);
+        
+        // 输入框变化时自动计算
+        num1Input.addEventListener('input', calculateSum);
+        num2Input.addEventListener('input', calculateSum);
+        
+        // 支持回车键计算
+        [num1Input, num2Input].forEach(input => {
+            input.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    calculateSum();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
